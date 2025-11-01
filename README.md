@@ -125,3 +125,12 @@ pio run -e esp32-s3         # Para ESP32-S3
 
 La librería usa `analogReadMilliVolts()` de Arduino ESP32, que devuelve directamente los valores en milivoltios sin necesidad de configuración adicional. Compatible con atenuación estándar de ADC.
 
+Tuneo del sensor de Sparkfun
+Las pruebas realizadas con la v0 revelaron falta de sensibilidad. El sensor permite esta ajuste por hardware soldando una resistencia en este punto:
+<img width="581" height="385" alt="image" src="https://github.com/user-attachments/assets/ac651b13-deaf-4c7c-b947-35f18b67b55a" />
+
+Los valores posibles están en esta tabla:
+<img width="507" height="113" alt="image" src="https://github.com/user-attachments/assets/40a82e07-9ac5-4fbc-a6c1-c540f1a10558" />
+
+Y finalmente en nuestro caso elegimos la de 1M para obtener una ganancia de 60 dB:
+<img width="665" height="506" alt="image" src="https://github.com/user-attachments/assets/e3b01f9c-e7b9-4c6e-80f4-e81177445197" />
