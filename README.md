@@ -125,7 +125,7 @@ pio run -e esp32-s3         # Para ESP32-S3
 
 La librería usa `analogReadMilliVolts()` de Arduino ESP32, que devuelve directamente los valores en milivoltios sin necesidad de configuración adicional. Compatible con atenuación estándar de ADC.
 
-Tuneo del sensor de Sparkfun
+### Tuneo del sensor de Sparkfun
 Las pruebas realizadas con la v0 revelaron falta de sensibilidad. El sensor permite esta ajuste por hardware soldando una resistencia en este punto:
 <img width="581" height="385" alt="image" src="https://github.com/user-attachments/assets/ac651b13-deaf-4c7c-b947-35f18b67b55a" />
 
