@@ -14,7 +14,7 @@ La librería está lista para publicar. Incluye:
 
 1. Crea un repositorio en GitHub:
    ```
-   https://github.com/YOUR_USERNAME/NoiseSensor
+  "https://github.com/Barakaldo-Makers/sonometro"
    ```
 
 2. Sube todos los archivos de la carpeta `lib/NoiseSensor/` al repositorio.

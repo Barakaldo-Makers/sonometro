@@ -9,7 +9,7 @@
  * - ESP32-C3, ESP32-S2 o ESP32-S3
  * - Sensor de sonido o micrófono conectado a GPIO 4
  * 
- * @author Carlos Orts
+ * @author Barakaldo Makers
  */
 
 #include <Arduino.h>

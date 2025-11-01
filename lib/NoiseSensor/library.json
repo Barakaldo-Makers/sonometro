@@ -16,16 +16,16 @@
   ],
   "authors": [
     {
-      "name": "Carlos Orts",
+      "name": "Barakaldo Makers",
       "maintainer": true
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/NoiseSensor.git"
+    "url": "https://github.com/Barakaldo-Makers/sonometro"
   },
   "license": "MIT",
-  "homepage": "https://github.com/YOUR_USERNAME/NoiseSensor",
+  "homepage": "https://github.com/Barakaldo-Makers/sonometro",
   "dependencies": [],
   "frameworks": ["arduino"],
   "platforms": ["espressif32"],

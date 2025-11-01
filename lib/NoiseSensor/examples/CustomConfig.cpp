@@ -5,7 +5,7 @@
  * Este ejemplo muestra cómo configurar parámetros personalizados
  * de la librería NoiseSensor.
  * 
- * @author Carlos Orts
+ * @author Barakaldo Makers
  */
 
 #include <Arduino.h>
