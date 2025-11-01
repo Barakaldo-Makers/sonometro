@@ -1,0 +1,38 @@
+{
+  "name": "NoiseSensor",
+  "version": "1.0.0",
+  "description": "Librería para medición de ruido ambiental en ESP32-C3, ESP32-S2 y ESP32-S3. Implementa cálculos de ruido LAeq, promedio legal (PMI), detección de picos y ajuste dinámico de niveles.",
+  "keywords": [
+    "esp32",
+    "esp32-c3",
+    "esp32-s2",
+    "esp32-s3",
+    "noise",
+    "sensor",
+    "adc",
+    "sound",
+    "measurement",
+    "environmental"
+  ],
+  "authors": [
+    {
+      "name": "Carlos Orts",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/NoiseSensor.git"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/YOUR_USERNAME/NoiseSensor",
+  "dependencies": [],
+  "frameworks": ["arduino"],
+  "platforms": ["espressif32"],
+  "headers": "NoiseSensor.h",
+  "examples": [
+    "examples/BasicUsage.cpp",
+    "examples/CustomConfig.cpp"
+  ]
+}
+
