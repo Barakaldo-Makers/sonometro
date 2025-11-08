@@ -24,15 +24,14 @@
     "type": "git",
     "url": "https://github.com/Barakaldo-Makers/sonometro"
   },
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/Barakaldo-Makers/sonometro",
   "dependencies": [],
   "frameworks": ["arduino"],
   "platforms": ["espressif32"],
-  "headers": "NoiseSensor.h",
+  "headers": "src/NoiseSensor/NoiseSensor.h",
   "examples": [
-    "examples/BasicUsage.cpp",
-    "examples/CustomConfig.cpp"
+    "examples/BasicUsage"
   ]
 }
 
