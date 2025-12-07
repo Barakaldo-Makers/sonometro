@@ -5,6 +5,16 @@
 
 class NoiseSensor {
 public:
+    // Niveles de logging
+    enum LogLevel {
+        LOG_NONE = 0,      // Sin logs
+        LOG_ERROR = 1,     // Solo errores
+        LOG_WARN = 2,      // Warnings y errores
+        LOG_INFO = 3,      // Información importante
+        LOG_DEBUG = 4,     // Debug detallado
+        LOG_VERBOSE = 5    // Todo (muy verboso)
+    };
+
     // Configuración
     struct Config {
         int adcPin = 4;                          // GPIO para ADC
@@ -15,6 +25,7 @@ public:
         unsigned long sleep4NoNoise = 300000;    // Tiempo de sleep cuando hay poco ruido
         bool indoor = false;                     // Si true, nunca entra en sleep
         int outlierThreshold = 4095;             // Umbral para descartar valores anómalos
+        LogLevel logLevel = LOG_NONE;            // Nivel de logging (por defecto: INFO)
     };
 
     // Resultados de mediciones
@@ -76,6 +87,14 @@ private:
 
     // Procesar ciclo principal
     void processMainCycle();
+
+    // Métodos de logging optimizados
+    void log(LogLevel level, const char* message) const;
+    void log(LogLevel level, const char* prefix, unsigned long value) const;
+    void log(LogLevel level, const char* prefix, int value) const;
+    void log(LogLevel level, const char* prefix, float value) const;
+    void log(LogLevel level, const char* prefix, unsigned int value) const;
+    inline bool shouldLog(LogLevel level) const { return level <= config.logLevel; }
 };
 
 #endif // NOISE_SENSOR_H

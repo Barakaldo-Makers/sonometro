@@ -1,5 +1,40 @@
 #include "NoiseSensor.h"
 
+// Implementación de métodos de logging
+void NoiseSensor::log(LogLevel level, const char* message) const {
+    if (shouldLog(level)) {
+        Serial.println(message);
+    }
+}
+
+void NoiseSensor::log(LogLevel level, const char* prefix, unsigned long value) const {
+    if (shouldLog(level)) {
+        Serial.print(prefix);
+        Serial.println(value);
+    }
+}
+
+void NoiseSensor::log(LogLevel level, const char* prefix, int value) const {
+    if (shouldLog(level)) {
+        Serial.print(prefix);
+        Serial.println(value);
+    }
+}
+
+void NoiseSensor::log(LogLevel level, const char* prefix, float value) const {
+    if (shouldLog(level)) {
+        Serial.print(prefix);
+        Serial.println(value);
+    }
+}
+
+void NoiseSensor::log(LogLevel level, const char* prefix, unsigned int value) const {
+    if (shouldLog(level)) {
+        Serial.print(prefix);
+        Serial.println(value);
+    }
+}
+
 NoiseSensor::NoiseSensor()
     : cycleComplete(false) {
     measurements.cycles = 50;
@@ -34,7 +69,7 @@ void NoiseSensor::begin() {
     loopsLegal = 0;
     icycles = 1;
     
-    Serial.println("NoiseSensor initialized");
+    log(LOG_INFO, "NoiseSensor initialized");
 }
 
 void NoiseSensor::update() {
@@ -43,8 +78,10 @@ void NoiseSensor::update() {
 
     // ++++++++++++++  Eliminar outlier ++++++++++++++++
     if (measurements.noise > config.outlierThreshold) {
-        Serial.print("Outlier removed: ");
-        Serial.println(measurements.noise);
+        if (shouldLog(LOG_WARN)) {
+            Serial.print("Outlier removed: ");
+            Serial.println(measurements.noise);
+        }
     } else {
         // Recalcular el LowNoiseLevel
         if (measurements.noise < measurements.lowNoiseLevel) {
@@ -56,14 +93,16 @@ void NoiseSensor::update() {
             noiseSum += measurements.noise;
             loops++;
 
-            Serial.print("Noise: ");
-            Serial.print(measurements.noise);
-            Serial.print(" loop: ");
-            Serial.print(loops);
-            Serial.print(" cycle: ");
-            Serial.print(measurements.cycles);
-            Serial.print(" loops_legal: ");
-            Serial.println(loopsLegal);
+            if (shouldLog(LOG_VERBOSE)) {
+                Serial.print("Noise: ");
+                Serial.print(measurements.noise);
+                Serial.print(" loop: ");
+                Serial.print(loops);
+                Serial.print(" cycle: ");
+                Serial.print(measurements.cycles);
+                Serial.print(" loops_legal: ");
+                Serial.println(loopsLegal);
+            }
             tmpIni = millis();
         }
 
@@ -80,13 +119,11 @@ void NoiseSensor::update() {
         // ++++++++++++++  Detección de máximo y mínimo ++++++++++++++++
         if (measurements.noise > measurements.noisePeak) {
             measurements.noisePeak = measurements.noise;
-            Serial.print("Noise peak: ");
-            Serial.println(measurements.noisePeak);
+            log(LOG_DEBUG, "Noise peak: ", measurements.noisePeak);
         }
         if (measurements.noise < measurements.noiseMin && loops > 5) {
             measurements.noiseMin = measurements.noise;
-            Serial.print("Noise min: ");
-            Serial.println(measurements.noiseMin);
+            log(LOG_DEBUG, "Noise min: ", measurements.noiseMin);
         }
     }
 
@@ -112,41 +149,46 @@ unsigned int NoiseSensor::readADC_mV() {
 }
 
 void NoiseSensor::calculateLegalAverage() {
-    Serial.print(" Legal time: ");
-    Serial.println(millis() - legalStart);
+    log(LOG_DEBUG, " Legal time: ", millis() - legalStart);
 
     measurements.noiseAvgLegal = int(noiseSumLegal / loopsLegal);
     if (measurements.noiseAvgLegal > measurements.noiseAvgLegalMax) {
         measurements.noiseAvgLegalMax = measurements.noiseAvgLegal;
-        Serial.print("  Noise legal current maximum: ");
-        Serial.println(measurements.noiseAvgLegalMax);
+        log(LOG_INFO, "  Noise legal current maximum: ", measurements.noiseAvgLegalMax);
     }
 
-    Serial.print("   (Legal) noise_avg_legal: ");
-    Serial.print(measurements.noiseAvgLegal);
-    Serial.print(" noise_avg_legal_max: ");
-    Serial.print(measurements.noiseAvgLegalMax);
-    Serial.print(" samples: ");
-    Serial.println(loopsLegal);
+    if (shouldLog(LOG_DEBUG)) {
+        Serial.print("   (Legal) noise_avg_legal: ");
+        Serial.print(measurements.noiseAvgLegal);
+        Serial.print(" noise_avg_legal_max: ");
+        Serial.print(measurements.noiseAvgLegalMax);
+        Serial.print(" samples: ");
+        Serial.println(loopsLegal);
+    }
 }
 
 void NoiseSensor::processMainCycle() {
-    Serial.print(" DutyCycle time: ");
-    Serial.println(millis() - countStart);
+    log(LOG_INFO, " DutyCycle time: ", millis() - countStart);
     countStart = millis();
 
     // Cálculos de ruido
     measurements.noiseAvg = int(noiseSum / loops);
-    Serial.print("  Noise average: ");
-    Serial.println(measurements.noiseAvg);
-    Serial.print("  Noise peak: ");
-    Serial.println(measurements.noisePeak);
-    Serial.print("  Noise sum: ");
-    Serial.println(noiseSum);
-    Serial.print("  Noise min: ");
-    Serial.println(measurements.noiseMin);
-    Serial.print("  Samples: ");
-    Serial.println(loops);
+    
+    if (shouldLog(LOG_INFO)) {
+        Serial.print("  Noise average: ");
+        Serial.println(measurements.noiseAvg);
+        Serial.print("  Noise peak: ");
+        Serial.println(measurements.noisePeak);
+        Serial.print("  Noise min: ");
+        Serial.println(measurements.noiseMin);
+        Serial.print("  Samples: ");
+        Serial.println(loops);
+    }
+    
+    if (shouldLog(LOG_DEBUG)) {
+        Serial.print("  Noise sum: ");
+        Serial.println(noiseSum);
+    }
 
     // Control de ciclos
     if (measurements.cycles > 99) {
@@ -164,7 +206,7 @@ void NoiseSensor::processMainCycle() {
         !config.indoor) {
         // Aquí podrías implementar sleep si lo necesitas
         measurements.cycles -= icycles;
-        Serial.println("  Low noise mode detected");
+        log(LOG_INFO, "  Low noise mode detected");
     }
     
     measurements.noiseAvgPre = measurements.noiseAvg;
