@@ -1,6 +1,6 @@
 {
   "name": "NoiseSensor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Librería para medición de ruido ambiental en ESP32-C3, ESP32-S2 y ESP32-S3. Implementa cálculos de ruido LAeq, promedio legal (PMI), detección de picos y ajuste dinámico de niveles.",
   "keywords": [
     "esp32",
