@@ -119,6 +119,11 @@ idf.py flash monitor
 - Migración ESP-IDF (componente + ejemplos I2C)
 - Limpieza de documentación y ajustes de pines
 
+## Calibración y uso
+
+- `INSTRUCCIONES_NORMATIVA.md`
+- `INSTRUCCIONES_MICROFONO_SPARKFUN.md`
+
 ## Licencia
 
 GPL-3.0-or-later

@@ -28,6 +28,13 @@ class NoiseSensor {
     bool indoor = false;                // Si true, nunca entra en sleep
     int outlierThreshold = 4095;        // Umbral para descartar valores anómalos
     LogLevel logLevel = LOG_NONE;       // Nivel de logging
+    float refDb = 94.0f;                // Nivel de referencia en dB para calibración
+    float refMv = 1000.0f;              // mV medidos en el nivel de referencia
+    bool assumeAWeighted = true;        // El sensor entrega señal ya ponderada A
+    uint8_t dayStartHour = 7;           // Inicio del periodo diurno (Ld)
+    uint8_t eveningStartHour = 19;      // Inicio del periodo vespertino (Le)
+    uint8_t nightStartHour = 23;        // Inicio del periodo nocturno (Ln)
+    bool trackLdLeLn = true;            // Calcular Ld/Le/Ln si hay hora válida
     adc_atten_t adcAtten = ADC_ATTEN_DB_11;
     adc_bitwidth_t adcWidth = ADC_BITWIDTH_12;
   };
@@ -42,6 +49,15 @@ class NoiseSensor {
     float noiseAvgLegal = 0;  // Promedio legal actual
     float noiseAvgLegalMax = 0;
     uint32_t cycles = 50;     // Contador de ciclos
+    float noiseDb = 0.0f;     // Valor instantáneo en dB
+    float noiseAvgDb = 0.0f;  // LAeq del ciclo en dB
+    float noisePeakDb = 0.0f; // Pico en dB
+    float noiseMinDb = 200.0f;// Mínimo en dB
+    float noiseAvgLegalDb = 0.0f;
+    float noiseAvgLegalMaxDb = 0.0f;
+    float Ld = 0.0f;
+    float Le = 0.0f;
+    float Ln = 0.0f;
   };
 
   NoiseSensor();
@@ -52,6 +68,8 @@ class NoiseSensor {
   const Measurements &getMeasurements() const { return measurements; }
   bool isCycleComplete() const { return cycleComplete; }
   void resetCycle();
+  void setCurrentHour(uint8_t hour);
+  void resetLdLeLn();
 
  private:
   Config config;
@@ -69,6 +87,16 @@ class NoiseSensor {
   float icycles = 1;
   bool cycleComplete = false;
 
+  int currentHour = -1;
+  double noiseSumEnergy = 0.0;
+  double noiseSumLegalEnergy = 0.0;
+  double dayEnergySum = 0.0;
+  double eveningEnergySum = 0.0;
+  double nightEnergySum = 0.0;
+  unsigned long dayCount = 0;
+  unsigned long eveningCount = 0;
+  unsigned long nightCount = 0;
+
   adc_oneshot_unit_handle_t adcHandle = nullptr;
   adc_unit_t adcUnit = ADC_UNIT_1;
   adc_channel_t adcChannel = ADC_CHANNEL_0;
@@ -78,6 +106,7 @@ class NoiseSensor {
   uint32_t readADC_mV();
   void calculateLegalAverage();
   void processMainCycle();
+  float mvToDb(float mv) const;
 
   void log(LogLevel level, const char *message) const;
   void log(LogLevel level, const char *prefix, uint64_t value) const;

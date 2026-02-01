@@ -26,6 +26,13 @@ public:
         bool indoor = false;                     // Si true, nunca entra en sleep
         int outlierThreshold = 4095;             // Umbral para descartar valores anómalos
         LogLevel logLevel = LOG_NONE;            // Nivel de logging (por defecto: INFO)
+        float refDb = 94.0f;                     // Nivel de referencia en dB para calibración
+        float refMv = 1000.0f;                   // mV medidos en el nivel de referencia
+        bool assumeAWeighted = true;             // El sensor entrega señal ya ponderada A
+        uint8_t dayStartHour = 7;                // Inicio del periodo diurno (Ld)
+        uint8_t eveningStartHour = 19;           // Inicio del periodo vespertino (Le)
+        uint8_t nightStartHour = 23;             // Inicio del periodo nocturno (Ln)
+        bool trackLdLeLn = true;                 // Calcular Ld/Le/Ln si hay hora válida
     };
 
     // Resultados de mediciones
@@ -39,6 +46,15 @@ public:
         float noiseAvgLegal;                     // Promedio legal actual
         float noiseAvgLegalMax;                  // Máximo promedio legal
         unsigned int cycles;                     // Contador de ciclos
+        float noiseDb;                           // Valor instantáneo en dB
+        float noiseAvgDb;                        // LAeq del ciclo en dB
+        float noisePeakDb;                       // Pico en dB
+        float noiseMinDb;                        // Mínimo en dB
+        float noiseAvgLegalDb;                   // Promedio legal en dB
+        float noiseAvgLegalMaxDb;                // Máximo legal en dB
+        float Ld;                                // Índice diurno
+        float Le;                                // Índice vespertino
+        float Ln;                                // Índice nocturno
     };
 
     // Constructor
@@ -60,6 +76,12 @@ public:
     // Preparar para nuevo ciclo (llamar después de procesar datos)
     void resetCycle();
 
+    // Informar la hora actual (0-23) para cálculo Ld/Le/Ln
+    void setCurrentHour(uint8_t hour);
+
+    // Reiniciar acumuladores de Ld/Le/Ln (recomendado cada 24h)
+    void resetLdLeLn();
+
 private:
     Config config;
     Measurements measurements;
@@ -79,6 +101,19 @@ private:
     float icycles;
     bool cycleComplete;
 
+    // Estado temporal para Ld/Le/Ln
+    int currentHour = -1;
+
+    // Acumuladores en energía para LAeq
+    double noiseSumEnergy;
+    double noiseSumLegalEnergy;
+    double dayEnergySum;
+    double eveningEnergySum;
+    double nightEnergySum;
+    unsigned long dayCount;
+    unsigned long eveningCount;
+    unsigned long nightCount;
+
     // Leer ADC en milivoltios (compatible con ESP32-C3/S2/S3)
     unsigned int readADC_mV();
 
@@ -87,6 +122,9 @@ private:
 
     // Procesar ciclo principal
     void processMainCycle();
+
+    // Conversión mV -> dB (calibrada)
+    float mvToDb(float mv) const;
 
     // Métodos de logging optimizados
     void log(LogLevel level, const char* message) const;
